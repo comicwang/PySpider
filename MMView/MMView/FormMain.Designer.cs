@@ -49,6 +49,8 @@
             this.listView1 = new System.Windows.Forms.ListView();
             this.imageList1 = new System.Windows.Forms.ImageList(this.components);
             this.menu_view = new System.Windows.Forms.ToolStripMenuItem();
+            this.label1 = new System.Windows.Forms.Label();
+            this.comboBox1 = new System.Windows.Forms.ComboBox();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.menuStrip1.SuspendLayout();
             this.pnlView.SuspendLayout();
@@ -57,6 +59,8 @@
             // 
             // dataGridView1
             // 
+            this.dataGridView1.AllowUserToAddRows = false;
+            this.dataGridView1.AllowUserToOrderColumns = true;
             this.dataGridView1.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
             this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataGridView1.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
@@ -161,7 +165,6 @@
             this.winFormPager1.ImeMode = System.Windows.Forms.ImeMode.Disable;
             this.winFormPager1.Location = new System.Drawing.Point(0, 506);
             this.winFormPager1.Name = "winFormPager1";
-            this.winFormPager1.PageSize = 100;
             this.winFormPager1.RecordCount = 0;
             this.winFormPager1.Size = new System.Drawing.Size(700, 27);
             this.winFormPager1.TabIndex = 2;
@@ -176,6 +179,7 @@
             this.pnlView.Name = "pnlView";
             this.pnlView.Size = new System.Drawing.Size(350, 533);
             this.pnlView.TabIndex = 3;
+            this.pnlView.Visible = false;
             // 
             // pictureBox1
             // 
@@ -210,14 +214,43 @@
             // 
             this.menu_view.Name = "menu_view";
             this.menu_view.Size = new System.Drawing.Size(68, 21);
-            this.menu_view.Text = "关闭查看";
+            this.menu_view.Text = "打开查看";
             this.menu_view.Click += new System.EventHandler(this.menu_view_Click);
+            // 
+            // label1
+            // 
+            this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(497, 512);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(29, 12);
+            this.label1.TabIndex = 4;
+            this.label1.Text = "每页";
+            // 
+            // comboBox1
+            // 
+            this.comboBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.comboBox1.FormattingEnabled = true;
+            this.comboBox1.Items.AddRange(new object[] {
+            "10",
+            "20",
+            "50",
+            "100",
+            "500"});
+            this.comboBox1.Location = new System.Drawing.Point(533, 508);
+            this.comboBox1.Name = "comboBox1";
+            this.comboBox1.Size = new System.Drawing.Size(50, 20);
+            this.comboBox1.TabIndex = 5;
+            this.comboBox1.Text = "10";
+            this.comboBox1.SelectedIndexChanged += new System.EventHandler(this.comboBox1_SelectedIndexChanged);
             // 
             // FormMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1050, 533);
+            this.Controls.Add(this.comboBox1);
+            this.Controls.Add(this.label1);
             this.Controls.Add(this.dataGridView1);
             this.Controls.Add(this.winFormPager1);
             this.Controls.Add(this.menuStrip1);
@@ -256,6 +289,8 @@
         private System.Windows.Forms.ListView listView1;
         private System.Windows.Forms.ImageList imageList1;
         private System.Windows.Forms.ToolStripMenuItem menu_view;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.ComboBox comboBox1;
     }
 }
 

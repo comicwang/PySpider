@@ -36,7 +36,7 @@ namespace MMView
 
             int total = query.Count();
 
-            var document = query.Skip((pageIndex - 1) * pageSize).Take(pageSize).ToList();
+            var document = query.OrderBy(t=>t["scanCount"]).Skip((pageIndex - 1) * pageSize).Take(pageSize).ToList();
 
             dataGridView1.Rows.Clear();
 
@@ -77,6 +77,7 @@ namespace MMView
                 dir = dataGridView1[6, e.RowIndex].Value.ToString();
 
                 imageList1.Images.Clear();
+                listView1.Items.Clear();
 
                 string[] files = Directory.GetFiles(dir);
 
@@ -120,6 +121,12 @@ namespace MMView
                 pnlView.Visible = true;
                 menu_view.Text = "关闭查看";
             }
+        }
+
+        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            winFormPager1.PageSize = int.Parse(comboBox1.SelectedItem.ToString());
+            winFormPager1.RecordCount = Query(winFormPager1.PageIndex, winFormPager1.PageSize);
         }
     }
 }
