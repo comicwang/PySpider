@@ -43,12 +43,12 @@
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.menu_refreash = new System.Windows.Forms.ToolStripMenuItem();
+            this.menu_view = new System.Windows.Forms.ToolStripMenuItem();
             this.winFormPager1 = new Kenny.Controls.WinForm.WinFormPager();
             this.pnlView = new System.Windows.Forms.Panel();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.listView1 = new System.Windows.Forms.ListView();
             this.imageList1 = new System.Windows.Forms.ImageList(this.components);
-            this.menu_view = new System.Windows.Forms.ToolStripMenuItem();
             this.label1 = new System.Windows.Forms.Label();
             this.comboBox1 = new System.Windows.Forms.ComboBox();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
@@ -60,9 +60,10 @@
             // dataGridView1
             // 
             this.dataGridView1.AllowUserToAddRows = false;
+            this.dataGridView1.AllowUserToDeleteRows = false;
             this.dataGridView1.AllowUserToOrderColumns = true;
             this.dataGridView1.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
-            this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dataGridView1.ColumnHeadersHeight = 20;
             this.dataGridView1.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.title,
             this.netUrl,
@@ -76,7 +77,8 @@
             this.dataGridView1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.dataGridView1.Location = new System.Drawing.Point(0, 25);
             this.dataGridView1.Name = "dataGridView1";
-            this.dataGridView1.RowTemplate.Height = 23;
+            this.dataGridView1.RowHeadersVisible = false;
+            this.dataGridView1.RowTemplate.Height = 50;
             this.dataGridView1.Size = new System.Drawing.Size(700, 481);
             this.dataGridView1.TabIndex = 0;
             this.dataGridView1.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView1_CellContentClick);
@@ -154,6 +156,13 @@
             this.menu_refreash.Text = "刷新数据";
             this.menu_refreash.Click += new System.EventHandler(this.menu_refreash_Click);
             // 
+            // menu_view
+            // 
+            this.menu_view.Name = "menu_view";
+            this.menu_view.Size = new System.Drawing.Size(68, 21);
+            this.menu_view.Text = "打开查看";
+            this.menu_view.Click += new System.EventHandler(this.menu_view_Click);
+            // 
             // winFormPager1
             // 
             this.winFormPager1.AutoSize = true;
@@ -209,13 +218,6 @@
             this.imageList1.ColorDepth = System.Windows.Forms.ColorDepth.Depth8Bit;
             this.imageList1.ImageSize = new System.Drawing.Size(16, 16);
             this.imageList1.TransparentColor = System.Drawing.Color.Transparent;
-            // 
-            // menu_view
-            // 
-            this.menu_view.Name = "menu_view";
-            this.menu_view.Size = new System.Drawing.Size(68, 21);
-            this.menu_view.Text = "打开查看";
-            this.menu_view.Click += new System.EventHandler(this.menu_view_Click);
             // 
             // label1
             // 

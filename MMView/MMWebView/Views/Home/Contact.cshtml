@@ -1,0 +1,28 @@
+﻿@{
+    ViewBag.Title = "MM详情";
+}
+<script type="text/javascript">
+    var arr = (location.search).slice(1);
+    var id = decodeURI(arr.split('=')[1]);
+    $(function () {
+        //获取图片信息
+        $.ajax({
+            url: '../Home/GetDetailList',
+            type: 'GET',
+            data: { id: id },
+            dataType: 'Json',
+            success: function (imgList) {
+                var html = "";
+                for (var i = 0; i < imgList.length; i++) {
+                    html += '<li><img src="' + imgList[i].src + '" data-original="' + imgList[i].src + '" alt="' + imgList[i].name + '"></li>';
+                }
+                $('#viewer').html(html);
+
+                $('#viewer').viewer();
+            }
+        });
+
+    });
+</script>
+
+<ul id="viewer"></ul>

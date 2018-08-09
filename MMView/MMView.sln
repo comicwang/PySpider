@@ -5,6 +5,8 @@ VisualStudioVersion = 15.0.27703.2042
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MMView", "MMView\MMView.csproj", "{DAFB216F-7790-4BB3-B968-56BB9D42FF5D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MMWebView", "MMWebView\MMWebView.csproj", "{476AE8FE-2374-4D0C-B033-1118505B3BCD}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{DAFB216F-7790-4BB3-B968-56BB9D42FF5D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DAFB216F-7790-4BB3-B968-56BB9D42FF5D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DAFB216F-7790-4BB3-B968-56BB9D42FF5D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{476AE8FE-2374-4D0C-B033-1118505B3BCD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{476AE8FE-2374-4D0C-B033-1118505B3BCD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{476AE8FE-2374-4D0C-B033-1118505B3BCD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{476AE8FE-2374-4D0C-B033-1118505B3BCD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1,0 +1,55 @@
+﻿@{
+    ViewBag.Title = "首页信息";
+}
+<script src="~/Scripts/jquery-3.3.1.min.js"></script>
+<style>
+    .border {
+        width: 300px;
+        height: 300px;
+        float: left;
+        margin-left: 15px;
+        text-align: center;
+    }
+
+    .img {
+        width: 250px;
+        height: 250px;
+        display: block;
+        padding-left: 18px;
+    }
+
+    a {
+        text-decoration: none;
+    }
+</style>
+
+<script type="text/javascript">
+    $(function () {
+
+        $.ajax({
+            url: '../Home/GetInfoPage',
+            type: 'GET',
+            data: { pageIndex: 1, pageSize: 20 },
+            dataType: 'Json',
+            success: function (pageList) {
+                var html = "";
+                for (var i = 0; i < pageList.length; i++) {
+                    html += '<div class="border" onclick="ClickDetail(this)"><h5>' + pageList[i].title + '</h5><img src="../Models/1.jpg" class="img"></div>';
+                }
+                $('.main').html(html);
+            }
+        });
+     
+    })
+
+    function ClickDetail(id) {
+        id = $(id).find('h5').text();
+        window.location.href = "../Home/Contact?id=" + id;
+    }
+
+   
+</script>
+
+<div class="main">
+
+</div>

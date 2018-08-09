@@ -26,7 +26,7 @@ namespace MMView
 
         private int Query(int pageIndex, int pageSize)
         {
-            var client = new MongoClient("mongodb://localhost:27017");
+            var client = new MongoClient(System.Configuration.ConfigurationManager.AppSettings["mongo"]);
 
             var database = client.GetDatabase("mm_database");
 
@@ -51,10 +51,13 @@ namespace MMView
                 dataGridView1[5, index].Value = document[i][6];
                 dataGridView1[6, index].Value = document[i][7];
                 //获取第一张图片
-                string[] lstUrl = Directory.GetFiles(document[i][7].AsString);
-                if (lstUrl.Length > 0)
-                    ((DataGridViewImageCell)dataGridView1[7, index]).Value = Image.FromFile(lstUrl[0]);
-                dataGridView1[8, index].Value = "查看源";
+                if (Directory.Exists(document[i][7].AsString))
+                {
+                    string[] lstUrl = Directory.GetFiles(document[i][7].AsString);
+                    if (lstUrl.Length > 0)
+                        ((DataGridViewImageCell)dataGridView1[7, index]).Value = Image.FromFile(lstUrl[0]);
+                    dataGridView1[8, index].Value = "查看源";
+                }
             }
 
             return total;
