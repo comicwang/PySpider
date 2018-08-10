@@ -1,6 +1,21 @@
 ﻿@{
     ViewBag.Title = "MM详情";
 }
+<style>
+    .srcimg{
+        width:100%
+    }
+    ul, li {
+        margin: 0;
+        padding: 0;
+        list-style: none;
+    }
+
+    li {
+        display: inline;
+        width:90%
+    }
+</style>
 <script type="text/javascript">
     var arr = (location.search).slice(1);
     var id = decodeURI(arr.split('=')[1]);
@@ -14,7 +29,7 @@
             success: function (imgList) {
                 var html = "";
                 for (var i = 0; i < imgList.length; i++) {
-                    html += '<li><img src="' + imgList[i].src + '" data-original="' + imgList[i].src + '" alt="' + imgList[i].name + '"></li>';
+                    html += '<li><img class="srcimg" src="' + imgList[i].src + '" data-original="' + imgList[i].src + '" alt="' + imgList[i].name + '"></li>';
                 }
                 $('#viewer').html(html);
 
@@ -25,4 +40,4 @@
     });
 </script>
 
-<ul id="viewer"></ul>
+<ul style="width:100%;" id="viewer"></ul>

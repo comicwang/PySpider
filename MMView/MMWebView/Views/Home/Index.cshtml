@@ -1,19 +1,20 @@
 ﻿@{
     ViewBag.Title = "首页信息";
 }
-<script src="~/Scripts/jquery-3.3.1.min.js"></script>
+<link href="~/bootstrap-paginator/css/bootstrap.min.css" rel="stylesheet" />
+<script src="~/bootstrap-paginator/js/bootstrap-paginator.js"></script>
 <style>
     .border {
-        width: 300px;
-        height: 300px;
+        width: 400px;
         float: left;
         margin-left: 15px;
+        margin-bottom:5px;
         text-align: center;
+        display:block;
     }
 
     .img {
-        width: 250px;
-        height: 250px;
+        width: 350px;
         display: block;
         padding-left: 18px;
     }
@@ -29,27 +30,73 @@
         $.ajax({
             url: '../Home/GetInfoPage',
             type: 'GET',
-            data: { pageIndex: 1, pageSize: 20 },
+            asyn:false,
+            data: { pageIndex: 1, pageSize: 10 },
             dataType: 'Json',
-            success: function (pageList) {
+            success: function (pageData) {
+                var pageList = pageData.list;
                 var html = "";
                 for (var i = 0; i < pageList.length; i++) {
-                    html += '<div class="border" onclick="ClickDetail(this)"><h5>' + pageList[i].title + '</h5><img src="../Models/1.jpg" class="img"></div>';
+                    html += '<div class="border" id="' + pageList[i].memo + '" onclick="ClickDetail(this)"><h5>' + pageList[i].title + '</h5><img src="' + pageList[i].src + '" class="img"></div>';
                 }
                 $('.main').html(html);
+
+                var currentPage = 1;
+                var pageCount = pageData.count;
+
+                var options = {
+                    bootstrapMajorVersion: 3, //版本
+                    currentPage: currentPage, //当前页数
+                    totalPages: pageCount, //总页数
+                    size: "small",
+                    itemTexts: function (type, page, current) {
+                        switch (type) {
+                            case "first":
+                                return "首页";
+                            case "prev":
+                                return "上一页";
+                            case "next":
+                                return "下一页";
+                            case "last":
+                                return "末页";
+                            case "page":
+                                return page;
+                        }
+                    },//点击事件，用于通过Ajax来刷新整个list列表
+                    onPageClicked: function (event, originalEvent, type, page) {
+                        $.ajax({
+                            url: '../Home/GetInfoPage',
+                            type: 'GET',
+                            asyn:false,
+                            data: { pageIndex: page, pageSize: 10 },
+                            dataType: 'Json',
+                            success: function (pageData) {
+                                var pageList = pageData.list;
+                                var html = "";
+                                for (var i = 0; i < pageList.length; i++) {
+                                    html += '<div class="border" id="' + pageList[i].memo + '" onclick="ClickDetail(this)"><h5>' + pageList[i].title + '</h5><img src="' + pageList[i].src + '" class="img"></div>';
+                                }
+                                $('.main').html(html);
+                            }
+                        });
+                    }
+                }
+
+                $('#pager').bootstrapPaginator(options);
             }
         });
-     
     })
 
-    function ClickDetail(id) {
-        id = $(id).find('h5').text();
+    function ClickDetail(div) {
+        id = $(div)[0].id;
         window.location.href = "../Home/Contact?id=" + id;
     }
 
-   
 </script>
 
-<div class="main">
+<div class="main" style="display:inline-block">
 
+</div>
+<div>
+    <ul id="pager"></ul>
 </div>

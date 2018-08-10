@@ -32,7 +32,7 @@ namespace MMWebView.Controllers
 
 
         [HttpGet]
-        public ActionResult GetInfoPage(int pageIndex,int pageSize)
+        public ActionResult GetInfoPage(int pageIndex, int pageSize)
         {
             var client = new MongoClient(System.Configuration.ConfigurationManager.AppSettings["mongo"]);
 
@@ -46,7 +46,18 @@ namespace MMWebView.Controllers
 
             var document = query.OrderBy(t => t["scanCount"]).Skip((pageIndex - 1) * pageSize).Take(pageSize).ToList();
 
-            return Content(document.ToJson());
+            for (int i = 0; i < document.Count; i++)
+            {
+                string[] files = Directory.GetFiles(document[i]["dirPath"].AsString);
+                if (files.Length > 0)
+                {
+                    string id = string.Format("{0}({1}p)", document[i]["title"].AsString, document[i]["mmCount"].AsString);
+                    document[i].Add("memo", BsonValue.Create(id));
+                    document[i].Add("src", BsonValue.Create(string.Format("../mmjpg/{0}/{1}", id, Path.GetFileName(files[0]))));
+                }
+            }
+
+            return Content((new { list = document, count = total }).ToJson());
         }
 
         [HttpGet]
@@ -58,7 +69,7 @@ namespace MMWebView.Controllers
 
             for (int i = 0; i < files.Length; i++)
             {
-                result.Add(new ImageModel() { name = Path.GetFileNameWithoutExtension(files[i]), src = "../mmjpg/" + Path.GetFileName(files[i]) });
+                result.Add(new ImageModel() { name = Path.GetFileNameWithoutExtension(files[i]), src = "../mmjpg/" + id + "/" + Path.GetFileName(files[i]) });
             }
 
             return Content(result.ToJson());
