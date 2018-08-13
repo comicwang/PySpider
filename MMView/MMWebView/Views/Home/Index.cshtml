@@ -3,20 +3,24 @@
 }
 <link href="~/bootstrap-paginator/css/bootstrap.min.css" rel="stylesheet" />
 <script src="~/bootstrap-paginator/js/bootstrap-paginator.js"></script>
+<link href="~/Content/normalize.css" rel="stylesheet" />
+<link href="~/Content/htmleaf-demo.css" rel="stylesheet" />
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+<link href="~/Content/style.css" rel="stylesheet" />
 <style>
     .border {
         width: 400px;
         float: left;
-        margin-left: 15px;
-        margin-bottom:5px;
+       
+        margin-bottom: 15px;
         text-align: center;
-        display:block;
+        display: block;
     }
 
     .img {
         width: 350px;
         display: block;
-        padding-left: 18px;
+        padding-left: 15px;
     }
 
     a {
@@ -26,12 +30,21 @@
 
 <script type="text/javascript">
     $(function () {
+        Search();
 
+        $('#searchBtn').click(function () {
+
+            Search($('#searchText').val());
+        });
+    })
+
+
+    function Search(keyword) {
         $.ajax({
             url: '../Home/GetInfoPage',
             type: 'GET',
-            asyn:false,
-            data: { pageIndex: 1, pageSize: 10 },
+            asyn: false,
+            data: { pageIndex: 1, pageSize: 10, keyword: keyword },
             dataType: 'Json',
             success: function (pageData) {
                 var pageList = pageData.list;
@@ -42,7 +55,10 @@
                 $('.main').html(html);
 
                 var currentPage = 1;
-                var pageCount = pageData.count;
+                var pageCount = parseInt(pageData.count / 10);
+
+                if (pageData.count % 10 != 0)
+                    pageCount = pageCount + 1;
 
                 var options = {
                     bootstrapMajorVersion: 3, //版本
@@ -67,10 +83,16 @@
                         $.ajax({
                             url: '../Home/GetInfoPage',
                             type: 'GET',
-                            asyn:false,
-                            data: { pageIndex: page, pageSize: 10 },
+                            asyn: false,
+                            data: { pageIndex: page, keyword: keyword, pageSize: 10 },
                             dataType: 'Json',
                             success: function (pageData) {
+                                var pageCount = parseInt(pageData.count / 10);
+
+                                if (pageData.count % 10 != 0)
+                                    pageCount = pageCount + 1;
+
+                                options.totalPages = pageCount;
                                 var pageList = pageData.list;
                                 var html = "";
                                 for (var i = 0; i < pageList.length; i++) {
@@ -85,7 +107,7 @@
                 $('#pager').bootstrapPaginator(options);
             }
         });
-    })
+    }
 
     function ClickDetail(div) {
         id = $(div)[0].id;
@@ -93,7 +115,12 @@
     }
 
 </script>
-
+<div class="search d1">
+    <form style="float:left;">
+        <input id="searchText" style="margin-top:25px" type="text" placeholder="请输入你想看的MM...">
+        <button type="button" style="margin-top:25px" id="searchBtn"></button>
+    </form>
+</div>
 <div class="main" style="display:inline-block">
 
 </div>

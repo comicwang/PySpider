@@ -18,42 +18,55 @@ namespace MMWebView.Controllers
 
         public ActionResult About()
         {
-            ViewBag.Message = "Your application description page.";
-
             return View();
         }
 
         public ActionResult Contact()
         {
-            ViewBag.Message = "Your contact page.";
-
             return View();
         }
 
 
         [HttpGet]
-        public ActionResult GetInfoPage(int pageIndex, int pageSize)
+        public ActionResult GetInfoPage(string keyword,string order,int pageIndex, int pageSize)
         {
             var client = new MongoClient(System.Configuration.ConfigurationManager.AppSettings["mongo"]);
 
             var database = client.GetDatabase("mm_database");
 
-            var collection = database.GetCollection<BsonDocument>("mm_collect");
+            var collection = database.GetCollection<MMModel>("mm_collect");
 
-            var query = collection.AsQueryable<BsonDocument>();
-
+            var query = collection.AsQueryable<MMModel>().OrderBy(t => t.title);
+            if(order== "scanCount")
+            {
+                query= collection.AsQueryable<MMModel>().OrderBy(t => t.scanCount);
+            }
             int total = query.Count();
 
-            var document = query.OrderBy(t => t["scanCount"]).Skip((pageIndex - 1) * pageSize).Take(pageSize).ToList();
+            var document = query.Skip((pageIndex - 1) * pageSize).Take(pageSize).ToList();
 
+
+            if (!string.IsNullOrEmpty(keyword))
+            {
+                total = query.Where(t => t.title.Contains(keyword)).Count();
+
+                document = query.Where(t => t.title.Contains(keyword)).Skip((pageIndex - 1) * pageSize).Take(pageSize).ToList();
+
+            }
+
+        
             for (int i = 0; i < document.Count; i++)
             {
-                string[] files = Directory.GetFiles(document[i]["dirPath"].AsString);
-                if (files.Length > 0)
+                string dirPath = document[i].dirPath;
+                if (Directory.Exists(dirPath))
                 {
-                    string id = string.Format("{0}({1}p)", document[i]["title"].AsString, document[i]["mmCount"].AsString);
-                    document[i].Add("memo", BsonValue.Create(id));
-                    document[i].Add("src", BsonValue.Create(string.Format("../mmjpg/{0}/{1}", id, Path.GetFileName(files[0]))));
+                    string[] files = Directory.GetFiles(dirPath);
+                    if (files.Length > 0)
+                    {
+                        string id = string.Format("{0}({1}p)", document[i].title, document[i].mmCount);
+                        document[i].memo = id;
+                        document[i].src = string.Format("../mmjpg/{0}/{1}", id, Path.GetFileName(files[0]));
+                    }
                 }
             }
 
@@ -80,6 +93,30 @@ namespace MMWebView.Controllers
             public string src { get; set; }
 
             public string name { get; set; }
+        }
+
+        public class MMModel
+        {
+            public string Id { get; set; }
+
+            public string title { get; set; }
+
+            public string netUrl { get; set; }
+
+            public string scrapyTime { get; set; }
+
+            public string publishTime { get; set; }
+
+            public string scanCount { get; set; }
+
+            public string mmCount { get; set; }
+
+            public string dirPath { get; set; }
+
+            public string memo { get; set; }
+
+            public string src { get; set; }
+
         }
     }
 }
