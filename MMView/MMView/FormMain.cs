@@ -1,5 +1,6 @@
 ﻿using MongoDB.Bson;
 using MongoDB.Driver;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -7,6 +8,8 @@ using System.Data;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Net;
+using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -22,45 +25,65 @@ namespace MMView
             winFormPager1.RecordCount = Query(winFormPager1.PageIndex, winFormPager1.PageSize);
         }
 
-        private string dir = string.Empty;
+        private Dictionary<string, string> dicUrl = new Dictionary<string, string>();
+
+        private string Request(string url)
+        {
+            HttpClient httpClient = new HttpClient(new HttpClientHandler() { AutomaticDecompression = System.Net.DecompressionMethods.GZip });
+
+            httpClient.BaseAddress = new Uri(System.Configuration.ConfigurationManager.AppSettings["mmUrl"]);
+
+            var responce = httpClient.GetAsync(url).Result;
+            responce.EnsureSuccessStatusCode();
+
+            var result = responce.Content.ReadAsStringAsync().Result;
+
+            return result;
+        }
+
+        private Image GetImage(string imageUrl)
+        {
+            imageUrl = imageUrl.Trim('\"');
+            try
+            {
+                return Image.FromStream(WebRequest.Create(imageUrl).GetResponse().GetResponseStream());
+            }
+            catch(Exception e)
+            {
+                return null;
+            }
+        }
 
         private int Query(int pageIndex, int pageSize)
         {
-            var client = new MongoClient(System.Configuration.ConfigurationManager.AppSettings["mongo"]);
+            string result = Request("api/MMView/GetInfoPage?" + string.Format("keyword={0}&order={1}&pageIndex={2}&pageSize={3}", string.Empty, string.Empty, pageIndex, pageSize));
 
-            var database = client.GetDatabase("mm_database");
+            dynamic dy = JToken.Parse(result) as dynamic;
 
-            var collection = database.GetCollection<BsonDocument>("mm_collect");
-
-            var query = collection.AsQueryable<BsonDocument>();
-
-            int total = query.Count();
-
-            var document = query.OrderBy(t=>t["scanCount"]).Skip((pageIndex - 1) * pageSize).Take(pageSize).ToList();
-
+            var document = dy.list;
             dataGridView1.Rows.Clear();
 
             for (int i = 0; i < document.Count; i++)
             {
                 int index = dataGridView1.Rows.Add();
-                dataGridView1[0, index].Value = document[i][1];
-                dataGridView1[1, index].Value = document[i][2];
-                dataGridView1[2, index].Value = document[i][3];
-                dataGridView1[3, index].Value = document[i][4];
-                dataGridView1[4, index].Value = document[i][5];
-                dataGridView1[5, index].Value = document[i][6];
-                dataGridView1[6, index].Value = document[i][7];
+                dataGridView1[0, index].Value = document[i].title;
+                dataGridView1[1, index].Value = document[i].netUrl;
+                dataGridView1[2, index].Value = document[i].scrapyTime;
+                dataGridView1[3, index].Value = document[i].publishTime;
+                dataGridView1[4, index].Value = document[i].scanCount;
+                dataGridView1[5, index].Value = document[i].mmCount;
+                dataGridView1[6, index].Value = document[i].dirPath;
+                string dirPath = document[i].dirPath;
                 //获取第一张图片
-                if (Directory.Exists(document[i][7].AsString))
+                string firstImageUrl = Request("api/MMView/GetFirstImage?id=" + document[i].memo);
+                if (!string.IsNullOrEmpty(firstImageUrl))
                 {
-                    string[] lstUrl = Directory.GetFiles(document[i][7].AsString);
-                    if (lstUrl.Length > 0)
-                        ((DataGridViewImageCell)dataGridView1[7, index]).Value = Image.FromFile(lstUrl[0]);
+                    ((DataGridViewImageCell)dataGridView1[7, index]).Value = GetImage(firstImageUrl);
                     dataGridView1[8, index].Value = "查看源";
                 }
             }
 
-            return total;
+            return dy.count;
         }
 
         private void winFormPager1_PageIndexChanged(object sender, EventArgs e)
@@ -77,26 +100,33 @@ namespace MMView
         {
             if (e.RowIndex >= 0 && e.ColumnIndex == View.DisplayIndex)
             {
-                dir = dataGridView1[6, e.RowIndex].Value.ToString();
+                //dir = dataGridView1[6, e.RowIndex].Value.ToString();
 
                 imageList1.Images.Clear();
                 listView1.Items.Clear();
+                dicUrl.Clear();
+                string result = Request("api/MMView/GetDetailList?id=" + string.Format("{0}({1}p)", dataGridView1[0, e.RowIndex].Value, dataGridView1[5, e.RowIndex].Value));
 
-                string[] files = Directory.GetFiles(dir);
+                dynamic dy = JToken.Parse(result) as dynamic;
 
-                if (files.Length > 0)
+                if (dy.Count > 0)
                 {
-                    foreach (var item in files)
+                    for (int i = 0; i < dy.Count; i++)
                     {
-                        string fileName = Path.GetFileNameWithoutExtension(item);
-                        imageList1.Images.Add(fileName, Image.FromFile(item));
-                        listView1.Items.Add(fileName, fileName);
+                        string imageSrc = dy[i].src;
+                        string imageName = dy[i].name;
+                        Image img = GetImage(imageSrc);
+                        if (img != null)
+                            imageList1.Images.Add(imageName, img);
+                        listView1.Items.Add(imageName, imageName);
+                        dicUrl.Add(imageName, imageSrc);
                     }
                     if (pnlView.Visible == false)
                     {
                         menu_view_Click(null, null);
                     }
-                    pictureBox1.Image = Image.FromFile(files[0]);
+                    string firstUrl = dy[0].src;
+                    pictureBox1.Image = GetImage(firstUrl);
 
                 }
             }
@@ -108,7 +138,7 @@ namespace MMView
             {
                 ListViewItem lv = listView1.SelectedItems[0];
 
-                pictureBox1.Image = Image.FromFile(Path.Combine(dir, lv.Text + ".jpg"));
+                pictureBox1.Image = GetImage(dicUrl[lv.Text]);
             }
         }
 

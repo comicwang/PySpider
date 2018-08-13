@@ -30,7 +30,7 @@
 
 <script type="text/javascript">
     $(function () {
-        Search();
+        Search($('#searchText').val());
 
         $('#searchBtn').click(function () {
 
@@ -41,11 +41,10 @@
 
     function Search(keyword) {
         $.ajax({
-            url: '../Home/GetInfoPage',
+            url: '../api/MMView/GetInfoPage',
             type: 'GET',
             asyn: false,
-            data: { pageIndex: 1, pageSize: 10, keyword: keyword },
-            dataType: 'Json',
+            data: { keyword: keyword, order: '', pageIndex: 1, pageSize: 10 },
             success: function (pageData) {
                 var pageList = pageData.list;
                 var html = "";
@@ -81,10 +80,10 @@
                     },//点击事件，用于通过Ajax来刷新整个list列表
                     onPageClicked: function (event, originalEvent, type, page) {
                         $.ajax({
-                            url: '../Home/GetInfoPage',
+                            url: '../api/MMView/GetInfoPage',
                             type: 'GET',
                             asyn: false,
-                            data: { pageIndex: page, keyword: keyword, pageSize: 10 },
+                            data: { keyword: keyword, order: '', pageIndex: page, pageSize: 10 },
                             dataType: 'Json',
                             success: function (pageData) {
                                 var pageCount = parseInt(pageData.count / 10);
