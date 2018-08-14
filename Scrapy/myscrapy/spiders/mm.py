@@ -51,8 +51,8 @@ class MMSpider(scrapy.Spider):
         if not os.path.exists(path):
             os.makedirs(path)
             os.chdir(path)
-        else:
-            print('this mm {0} has scarpyed'.format(item['title']));
+        elif (len)(os.listdir(path))==(int)(item['mmCount']):
+            print('this mm {0} has scarpyed'.format(item['title']))
             return
         yield item
         #得到所有图片的地址
@@ -61,7 +61,11 @@ class MMSpider(scrapy.Spider):
         index=0;
         for mm_jpg_url in mm_urls:
             index=index+1
-            yield scrapy.Request(url=mm_jpg_url,meta={'savePath':os.path.join(item['dirPath'],"pic_cnt_{}.jpg".format(index))},callback=self.download_jpg);
+            savePath=os.path.join(item['dirPath'],"pic_cnt_{}.jpg".format(index))
+            if os.path.exists(savePath):
+                print('this image has exits')
+                continue
+            yield scrapy.Request(url=mm_jpg_url,meta={'savePath':savePath},callback=self.download_jpg);
 
     def download_jpg(self,response):
         src=response.xpath("//div[@class='content']/a/img/@src").extract_first();

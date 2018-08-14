@@ -7,6 +7,10 @@
 
 from scrapy import signals
 
+from myscrapy.mail import Sendmail
+
+import datetime
+
 
 class MyscrapySpiderMiddleware(object):
     # Not all methods need to be defined. If a method is not defined,
@@ -53,6 +57,9 @@ class MyscrapySpiderMiddleware(object):
             yield r
 
     def spider_opened(self, spider):
+        p = Sendmail('smtp.qq.com', '672802899@qq.com', 'sutyidvzdlxqbfbg')
+        p.setMailInfo(['672802899@qq.com'], datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')+':爬虫报告', '您的爬虫已经开始执行了！')
+        p.run()
         spider.logger.info('Spider opened: %s' % spider.name)
 
 

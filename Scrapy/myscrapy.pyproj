@@ -23,6 +23,9 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="myscrapy\items.py" />
+    <Compile Include="myscrapy\mail.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="myscrapy\middlewares.py" />
     <Compile Include="myscrapy\mymssql.py">
       <SubType>Code</SubType>
