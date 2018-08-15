@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>详情</title>
+    <script type="text/javascript" src="../vendors/jquery/jquery.js"></script>
+    <script type="text/javascript" src="../script/api.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/api.css"/>
+    <link rel="stylesheet" type="text/css" href="../css/style.css"/>
+    <link rel="stylesheet" type="text/css" href="../vendors/viewer/viewer.css"/>
+    <script type="text/javascript" src="../vendors/vue/vue.js"></script>
+    <script type="text/javascript" src="../vendors/viewer/viewer.js"></script>
+    <script type="text/javascript">
+       apiready=function(){
+
+       }
+       var arr = (location.search).slice(1);
+       var id = decodeURI(arr.split('=')[1]);
+       var vm =new Vue({
+          el: '#app',
+          data: {
+            site: "11"
+          },
+          methods: {
+               ini:function(id){
+                 console.log(id);
+                 $('#title').html(id);
+                 $.ajax({
+                     url: 'http://47.99.62.128/api/MMView/GetDetailList',
+                     type: 'GET',
+                     data: { id: id },
+                     dataType: 'Json',
+                     success: function (imgList) {
+                         var html = "";
+                         for (var i = 0; i < imgList.length; i++) {
+                             html += '<li><img class="srcimg" src="' + imgList[i].src + '" data-original="' + imgList[i].src + '" alt="' + imgList[i].name + '"></li>';
+                         }
+                         $('#viewer').html(html);
+                         $('#viewer').viewer();
+                     }
+                 });
+
+               }
+             }
+           });
+        vm.ini(id);
+        $('#redirct').click(function(){
+          console.log('11');
+        })
+    </script>
+    <style>
+      .srcimg{
+          width:100%
+      }
+      ul, li {
+          margin: 0;
+          padding: 0;
+          list-style: none;
+      }
+
+      li {
+          display: inline;
+          width:90%
+      }
+  </style>
+</head>
+<body id='app'>
+   <div style="width:100%;height:60px;padding-top:25px;position:fixed;top:0">
+     <button id="redirct" style="float:left;margin-left:10px">返回</button>
+     <a id="title" style="text-align:center"></a>
+   </div>
+    <ul style="width:100%;padding-top:60px;" id="viewer"></ul>
+</body>
+</html>
