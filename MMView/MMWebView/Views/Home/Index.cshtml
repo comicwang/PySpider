@@ -23,6 +23,12 @@
         padding-left: 15px;
     }
 
+    .border_txt {
+        display: block;
+        width: 350px;
+        padding-left: 15px;
+    }
+
     a {
         text-decoration: none;
     }
@@ -36,20 +42,33 @@
 
             Search($('#searchText').val());
         });
-    })
 
+        $('#scrapyData').click(function () {
+
+            $.ajax({
+                url: '../api/MMView/GetInfoPage',
+                type: 'GET',
+                async: false,
+                success: function (data) {
+                    alert("爬取完成：" + new Date());
+                },cache:false
+            })
+
+        });
+    })
 
     function Search(keyword) {
         $.ajax({
             url: '../api/MMView/GetInfoPage',
             type: 'GET',
-            asyn: false,
+            async: false,
             data: { keyword: keyword, order: '', pageIndex: 1, pageSize: 10 },
             success: function (pageData) {
                 var pageList = pageData.list;
                 var html = "";
                 for (var i = 0; i < pageList.length; i++) {
-                    html += '<div class="border" id="' + pageList[i].memo + '" onclick="ClickDetail(this)"><h5>' + pageList[i].title + '</h5><img src="' + pageList[i].src + '" class="img"></div>';
+                    html += '<div class="border" id="' + pageList[i].memo + '" onclick="ClickDetail(this)"><h5>' + pageList[i].title + '</h5><img src="' + pageList[i].src + '" class="img">';
+                    html += '<div class="border_txt"><span>浏览（' + pageList[i].scanCount + '）</sapn><span>爬取时间：' + pageList[i].scrapyTime + '</span></div></div>';
                 }
                 $('.main').html(html);
 
@@ -114,6 +133,7 @@
     }
 
 </script>
+<button class="btn-success" id="scrapyData">抓取数据</button>
 <div class="search d1">
     <form style="float:left;">
         <input id="searchText" style="margin-top:25px" type="text" placeholder="请输入你想看的MM...">

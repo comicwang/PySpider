@@ -23,5 +23,10 @@ namespace MMWebView.Controllers
         {
             return View();
         }
+
+        public ActionResult Scrapy()
+        {
+            return View();
+        }
     }
 }
